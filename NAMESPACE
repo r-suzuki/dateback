@@ -1,0 +1,8 @@
+export("collect")
+importFrom("dplyr", "%>%", "filter", "select", "tibble", "as_tibble",
+           "mutate", "bind_rows", "desc", "arrange", "pull", "slice")
+importFrom("rvest", "html_element", "html_elements", "html_table",
+           "read_html")
+importFrom("utils", "capture.output", "download.file",
+             "installed.packages", "untar")
+importFrom("desc", "desc_get_deps")

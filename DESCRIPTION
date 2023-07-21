@@ -1,0 +1,14 @@
+Package: dateback
+Type: Package
+Title: Collect R Packages on a Specified Date with Dependencies
+Version: 0.1.0
+Author: Ryota Suzuki <suzuki@ef-prime.com>
+Maintainer: Ryota Suzuki <suzuki@ef-prime.com>
+Description: Works like a virtual CRAN snapshot for source packages.
+    It automatically downloads `tar.gz` files with dependencies,
+    all of which were available on a specific day.
+    The output directory can be used as a local package repository.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Imports: curl, desc, dplyr, httr, rvest
+URL: https://github.com/r-suzuki/dateback
