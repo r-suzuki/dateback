@@ -14,6 +14,8 @@ The output directory can be used as a local package repository.
 devtools::install_github("r-suzuki/dateback")
 ```
 
+It will also be submitted to CRAN (after the "submission offline" period from Jul 21 to Aug 7, 2023).
+
 ## Example
 To collect `ranger` package and it's dependent packages on the date `2023-03-01`:
 
