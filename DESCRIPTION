@@ -8,6 +8,10 @@ Description: Works like a virtual CRAN snapshot for source packages.
     It automatically downloads `tar.gz` files with dependencies,
     all of which were available on a specific day.
     The output directory can be used as a local package repository.
+    This package aims to (partially) substitute the "CRAN Time Machine"
+    (or "MRAN Time Machine") and its related `checkpoint` package,
+    which no longer work because of the retirement in July 2023
+    (<https://blog.revolutionanalytics.com/2023/01/mran-time-machine-retired.html>).
 License: MIT + file LICENSE
 Encoding: UTF-8
 Imports: curl, desc, dplyr, httr, rvest

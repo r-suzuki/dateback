@@ -37,5 +37,19 @@ The output directory can be used as a local package repository:
 install.packages(pkgs = "ranger", repos = "file:outdir")
 ```
 
+## Details
+This package aims to (partially) substitute the "CRAN Time Machine"
+(or "MRAN Time Machine") and its related `checkpoint` package,
+which no longer work because of the [retirement in July 2023](https://blog.revolutionanalytics.com/2023/01/mran-time-machine-retired.html).
+
+As mentioned in the above URL, `miniCRAN` package would be helpful
+if you want to archive the current packages and will use it in the future.
+
+`dateback` will be a better alternative if you:
+
+- haven't archived packages in advance, but need them anyway
+- wish to find a date when everything went fine
+- just need source package files for Docker images
+
 ## NOTE
 This project is at the very beginning stage, so everything can be changed shortly.
