@@ -2,7 +2,7 @@
 
 ## Overview
 
-`dateback` works like a virtual CRAN snapshot for source packages.
+`dateback` is an R package that works like a virtual CRAN snapshot for source packages.
 It automatically downloads and installs `tar.gz` files with dependencies,
 all of which were available on a specific day.
 
