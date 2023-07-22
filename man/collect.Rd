@@ -1,7 +1,18 @@
 \name{collect}
 \alias{collect}
-\title{Collect source packages on a specified date with dependencies}
+\alias{install}
+\title{Collect and install source packages on a specified date with dependencies}
 \usage{
+install(pkgs, date, outdir,
+        lib = .libPaths()[1],
+        repos = "https://cloud.r-project.org",
+        dependencies = c("Depends", "Imports", "LinkingTo"),
+        skip_installed = TRUE,
+        skip_recommended = FALSE,
+        overwrite = FALSE,
+        ...
+  )
+
 collect(pkgs, date, outdir,
         repos = "https://cloud.r-project.org",
         dependencies = c("Depends", "Imports", "LinkingTo"),
@@ -26,6 +37,8 @@ See the example for details.
     It will contain downloaded source packages, and can be used as
     a local package repository. See the example for details.}
   \item{repos}{CRAN mirror URL such as \code{https://cloud.r-project.org}.}
+  \item{lib}{character vector of the library directories used in
+    \code{utils::install.packages()}.}
   \item{dependencies}{character vector of the dependency level
     for additional downloads. It can include
     \code{c("Depends", "Imports", "LinkingTo", "Suggests")}.}
@@ -35,10 +48,15 @@ See the example for details.
     "recommended" packages.}
   \item{overwrite}{logical. If \code{TRUE} it overwrites existing files in
     \code{outdir}.}
+  \item{\dots}{Arguments to be passed to \code{utils::install.packages}.}
 }
 \examples{
 \dontrun{
-dateback::collect(pkgs = "ranger", date = "2023-03-01", outdir = "outdir")
-install.packages(pkgs = "ranger", repos = "file:outdir")
+# Install 'ranger' package and it's dependecies on the date `2023-03-01`
+dateback::install(pkgs = "ranger", date = "2023-03-01")
+
+# Collect packages and install them later (maybe in another system)
+dateback::collect(pkgs = "ranger", date = "2023-03-01", outdir = "out_dir")
+install.packages(pkgs = "ranger", repos = "file:out_dir")
 }
 }
