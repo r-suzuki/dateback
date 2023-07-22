@@ -2,8 +2,8 @@ collect <- function(
     pkgs,
     date,
     outdir,
-    dependencies = c("Depends", "Imports", "LinkingTo"),
     repos = "https://cloud.r-project.org",
+    dependencies = c("Depends", "Imports", "LinkingTo"),
     skip_installed = FALSE,
     skip_recommended = TRUE,
     overwrite = FALSE

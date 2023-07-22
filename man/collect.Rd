@@ -3,8 +3,8 @@
 \title{Collect source packages on a specified date with dependencies}
 \usage{
 collect(pkgs, date, outdir,
-        dependencies = c("Depends", "Imports", "LinkingTo"),
         repos = "https://cloud.r-project.org",
+        dependencies = c("Depends", "Imports", "LinkingTo"),
         skip_installed = FALSE,
         skip_recommended = TRUE,
         overwrite = FALSE
@@ -25,10 +25,10 @@ See the example for details.
   \item{outdir}{character specifying the output directory path.
     It will contain downloaded source packages, and can be used as
     a local package repository. See the example for details.}
+  \item{repos}{CRAN mirror URL such as \code{https://cloud.r-project.org}.}
   \item{dependencies}{character vector of the dependency level
     for additional downloads. It can include
     \code{c("Depends", "Imports", "LinkingTo", "Suggests")}.}
-  \item{repos}{CRAN mirror URL such as \code{https://cloud.r-project.org}.}
   \item{skip_installed}{logical. If \code{TRUE} it does not collect files for
     packages already installed.}
   \item{skip_recommended}{logical. If \code{TRUE} it does not collet files for
