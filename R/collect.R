@@ -28,7 +28,7 @@ collect <- function(
     select(Package, Date)
 
   # installed packages
-  pkg_inst <- installed.packages() %>%
+  pkg_installed <- installed.packages() %>%
     as_tibble() %>%
     select(Package, Version, Priority)
 
@@ -37,10 +37,10 @@ collect <- function(
     pkg_installed
   } else {
     if(skip_recommended) {
-      pkg_inst %>%
+      pkg_installed %>%
         filter(Priority %in% c("base", "recommended"))
     } else {
-      pkg_inst %>%
+      pkg_installed %>%
         filter(Priority == "base")
     }
   }
@@ -63,7 +63,7 @@ collect <- function(
       pull(code)
   )
 
-  tools::write_PACKAGES("outdir/src/contrib")
+  tools::write_PACKAGES(file.path(outdir, "src/contrib"))
   write(script, file.path(outdir, "install.R"))
   capture.output(
     result %>% as.data.frame %>% print,
