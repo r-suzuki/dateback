@@ -15,7 +15,7 @@ devtools::install_github("r-suzuki/dateback")
 It will also be submitted to CRAN (after the "submission offline" period from Jul 21 to Aug 7, 2023).
 
 ## Example
-To install `ranger` package and it's dependent packages on the date `2023-03-01`:
+To install `ranger` package and it's dependencies on the date `2023-03-01`:
 
 ```R
 dateback::install(pkgs = "ranger", date = "2023-03-01")
