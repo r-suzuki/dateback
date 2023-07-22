@@ -11,7 +11,7 @@
     package = character(0),
     file = character(0),
     date = character(0),
-    type = character(0),
+    status = character(0),
     url = character(0)
   )
 
@@ -37,7 +37,7 @@
       }
 
       if(use_latest) {
-        type <- "latest"
+        status <- "latest"
         url <- paste0(repos, "/web/packages/", p, "/")
 
         tbl <- read_html(url) %>%
@@ -53,7 +53,7 @@
         gzfile_url <- paste0(repos, "/src/contrib/",  gzfile_name)
         gzfile_date <- date_latest
       } else if(use_archive){
-        type <- "archive"
+        status <- "archive"
         url <- paste0(repos, "/src/contrib/Archive/", p, "/")
 
         con <- curl::curl(url, open = "r")
@@ -93,7 +93,7 @@
       missing <- if(nrow(dep_tbl) > 0) {
         dep_tbl %>%
           filter(package != "R") %>%
-          filter(type %in% dependencies) %>%
+          filter(status %in% dependencies) %>%
           filter(!(package %in% exclude)) %>%
           pull(package)
       } else {
@@ -112,7 +112,7 @@
       }
 
       p_tbl <- tibble(package = p, file = gzfile_name,  date = gzfile_date,
-                      type = type, url = gzfile_url)
+                      status = status, url = gzfile_url)
 
       result <- bind_rows(result, p_tbl)
       exclude <- union(exclude, p)
