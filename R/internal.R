@@ -93,7 +93,7 @@
       missing <- if(nrow(dep_tbl) > 0) {
         dep_tbl %>%
           filter(package != "R") %>%
-          filter(status %in% dependencies) %>%
+          filter(type %in% dependencies) %>%
           filter(!(package %in% exclude)) %>%
           pull(package)
       } else {
