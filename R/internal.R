@@ -2,7 +2,7 @@
   tmpfile <- tempfile()
   on.exit(unlink(tmpfile))
 
-  download.file(url, tmpfile, quiet = TRUE)
+  utils::download.file(url, tmpfile, quiet = TRUE)
   html <- readLines(tmpfile)
   rows <- grep("^\\s*<tr>.*</tr>\\s*$", html, value = TRUE)
 
@@ -98,10 +98,10 @@
 
       # Download and uncompress tar.gz
       gzf <- file.path(outdir_src_contrib, basename(gzfile_url))
-      download.file(url = gzfile_url, destfile = gzf)
+      utils::download.file(url = gzfile_url, destfile = gzf)
 
       tmpd <- tempdir()
-      untar(gzf, exdir = tmpd)
+      utils::untar(gzf, exdir = tmpd)
 
       uncomp <- file.path(tmpd, p)
 

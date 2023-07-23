@@ -24,7 +24,7 @@ collect <- function(
   pkg_latest <- .get_pkg_latest(repos)
 
   # installed packages
-  pkg_installed <- as.data.frame(installed.packages())[, c("Package", "Version", "Priority"), drop = FALSE]
+  pkg_installed <- as.data.frame(utils::installed.packages())[, c("Package", "Version", "Priority"), drop = FALSE]
 
   # packages to be excluded
   pkg_exclude <- if(skip_installed) {
@@ -50,7 +50,7 @@ collect <- function(
   tools::write_PACKAGES(file.path(outdir, "src/contrib"))
 
   # TODO: as.data.frame can be removed if result is data.frame
-  capture.output(
+  utils::capture.output(
     print(as.data.frame(result)),
     file = file.path(outdir, "log_collect.txt")
   )

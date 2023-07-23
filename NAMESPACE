@@ -1,4 +1,2 @@
-export("collect")
-importFrom("utils", "capture.output", "download.file",
-             "installed.packages", "untar")
+export("install", "collect")
 importFrom("desc", "desc_get_deps")
