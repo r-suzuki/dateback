@@ -1,19 +1,23 @@
 .get_pkg_latest <- function(repos) {
+  # available packages
+  pkg_available <- as.data.frame(utils::available.packages(repos = repos, type = "source"))
+
   pkg_by_date_url <- paste0(repos, "/web/packages/available_packages_by_date.html")
   read_html(pkg_by_date_url) %>%
     html_element("table") %>%
     html_table() %>%
-    select(Package, Date) %>%
+    left_join(pkg_available %>% select(Package, Version), by = "Package") %>%
+    select(Package, Version, Date) %>%
     return
 }
 
-.get_df_binded <- function(url) {
-  read_html(url) %>%
-    html_elements("table") %>%
-    html_table() %>%
-    bind_rows() %>%
-    return
-}
+# .tmp <- function(url) {
+#   tmpfile <- tempfile()
+#   on.exit(unlink(tmpfile))
+#
+#   download.file(url, tmpfile, quiet = TRUE)
+#   html <- readLines(tmpfile)
+# }
 
 .collect <- function(
     pkgs,
@@ -54,13 +58,8 @@
 
       if(use_latest) {
         status <- "latest"
-        url <- paste0(repos, "/web/packages/", p, "/")
-
-        df <- .get_df_binded(url)
-
-        df_download <- subset(df, grepl("^Package.*source:$", X1))[1, , drop = FALSE]
-
-        gzfile_name <- df_download$X2
+        v <- subset(pkg_available, Package == p)$Version
+        gzfile_name <- paste0(p, "_", v, ".tar.gz")
         gzfile_url <- paste0(repos, "/src/contrib/",  gzfile_name)
         gzfile_date <- date_latest
       } else if(use_archive){
