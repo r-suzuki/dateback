@@ -2,22 +2,26 @@
   # available packages
   pkg_available <- as.data.frame(utils::available.packages(repos = repos, type = "source"))
 
-  pkg_by_date_url <- paste0(repos, "/web/packages/available_packages_by_date.html")
-  read_html(pkg_by_date_url) %>%
-    html_element("table") %>%
-    html_table() %>%
+  url <- paste0(repos, "/web/packages/available_packages_by_date.html")
+  .get_pkg_by_date(url) %>%
     left_join(pkg_available %>% select(Package, Version), by = "Package") %>%
     select(Package, Version, Date) %>%
-    return
+    return()
 }
 
-# .tmp <- function(url) {
-#   tmpfile <- tempfile()
-#   on.exit(unlink(tmpfile))
-#
-#   download.file(url, tmpfile, quiet = TRUE)
-#   html <- readLines(tmpfile)
-# }
+.get_pkg_by_date <- function(url) {
+  tmpfile <- tempfile()
+  on.exit(unlink(tmpfile))
+
+  download.file(url, tmpfile, quiet = TRUE)
+  html <- readLines(tmpfile)
+  rows <- grep("^\\s*<tr>.*</tr>\\s*$", html, value = TRUE)
+
+  date_col <- sub("^\\s*<tr>\\s*<td>\\s*([^< ]+)\\s*</td>.*$", "\\1", rows)
+  pkgs_col <- sub("^.*<span class=\"CRAN\">([^<]+)</span>.*$", "\\1", rows)
+
+  return(data.frame(Package=pkgs_col[-1], Date=date_col[-1]))
+}
 
 .collect <- function(
     pkgs,
