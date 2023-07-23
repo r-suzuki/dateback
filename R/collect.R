@@ -31,9 +31,9 @@ collect <- function(
     pkg_installed
   } else {
     if(skip_recommended) {
-      subset(pkg_installed, Priority %in% c("base", "recommended"))
+      pkg_installed[pkg_installed$Priority %in% c("base", "recommended"), , drop = FALSE]
     } else {
-      subset(pkg_installed, Priority == "base")
+      pkg_installed[pkg_installed$Priority == "base", , drop = FALSE]
     }
   }
 
