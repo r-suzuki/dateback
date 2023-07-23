@@ -7,7 +7,7 @@
     return
 }
 
-.get_tbl_binded <- function(url) {
+.get_df_binded <- function(url) {
   read_html(url) %>%
     html_elements("table") %>%
     html_table() %>%
@@ -56,11 +56,11 @@
         status <- "latest"
         url <- paste0(repos, "/web/packages/", p, "/")
 
-        tbl <- .get_tbl_binded(url)
+        df <- .get_df_binded(url)
 
-        tbl_download <- subset(tbl, grepl("^Package.*source:$", X1))[1, , drop = FALSE]
+        df_download <- subset(df, grepl("^Package.*source:$", X1))[1, , drop = FALSE]
 
-        gzfile_name <- tbl_download$X2
+        gzfile_name <- df_download$X2
         gzfile_url <- paste0(repos, "/src/contrib/",  gzfile_name)
         gzfile_date <- date_latest
       } else if(use_archive){
@@ -72,21 +72,21 @@
         close(con)
 
         rows <- txt[grepl("<a href=.*\\d{4}-\\d{2}-\\d{2}", txt)]
-        tbl <- data.frame(
+        df <- data.frame(
           File = sub('^ *<a href="(.+\\.tar\\.gz)">.*$', '\\1', rows),
           Date = sub('^.*(\\d{4}-\\d{2}-\\d{2}).*$', '\\1', rows),
           stringsAsFactors = FALSE
         )
 
-        tbl_download <- local({
-          tmp <- subset(tbl, Date <= date)
+        df_download <- local({
+          tmp <- subset(df, Date <= date)
           tmp <- tmp[order(tmp$Date, decreasing = TRUE)[1], , drop = FALSE]
           tmp
         })
 
-        gzfile_name <- tbl_download$File
+        gzfile_name <- df_download$File
         gzfile_url <- paste0(url, gzfile_name)
-        gzfile_date <- tbl_download$Date
+        gzfile_date <- df_download$Date
       } else {
         stop("Package '", p, "' is not available at ", repos)
       }
@@ -101,10 +101,10 @@
       uncomp <- file.path(tmpd, p)
 
       # table of dependencies
-      dep_tbl <- desc_get_deps(file.path(uncomp))
+      dep_df <- desc_get_deps(file.path(uncomp))
 
-      missing <- if(nrow(dep_tbl) > 0) {
-        subset(dep_tbl, package != "R" &
+      missing <- if(nrow(dep_df) > 0) {
+        subset(dep_df, package != "R" &
                  type %in% dependencies &
                  !(package %in% exclude)
                )$package
@@ -123,11 +123,11 @@
         exclude <- union(exclude, result_mis$package)
       }
 
-      p_tbl <- data.frame(package = p, file = gzfile_name,  date = gzfile_date,
+      p_df <- data.frame(package = p, file = gzfile_name,  date = gzfile_date,
                       status = status, url = gzfile_url,
                       stringsAsFactors = FALSE)
 
-      result <- bind_rows(result, p_tbl)
+      result <- bind_rows(result, p_df)
       exclude <- union(exclude, p)
     }
   }
