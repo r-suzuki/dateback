@@ -7,7 +7,7 @@
     return
 }
 
-.get_tbl <- function(url) {
+.get_tbl_binded <- function(url) {
   read_html(url) %>%
     html_elements("table") %>%
     html_table() %>%
@@ -24,12 +24,13 @@
     pkg_latest,
     exclude = NULL) {
 
-  result <- tibble(
+  result <- data.frame(
     package = character(0),
     file = character(0),
     date = character(0),
     status = character(0),
-    url = character(0)
+    url = character(0),
+    stringsAsFactors = FALSE
   )
 
   for(p in pkgs) {
@@ -55,7 +56,7 @@
         status <- "latest"
         url <- paste0(repos, "/web/packages/", p, "/")
 
-        tbl <- .get_tbl(url)
+        tbl <- .get_tbl_binded(url)
 
         tbl_download <- subset(tbl, grepl("^Package.*source:$", X1))[1, , drop = FALSE]
 
@@ -71,9 +72,10 @@
         close(con)
 
         rows <- txt[grepl("<a href=.*\\d{4}-\\d{2}-\\d{2}", txt)]
-        tbl <- tibble(
+        tbl <- data.frame(
           File = sub('^ *<a href="(.+\\.tar\\.gz)">.*$', '\\1', rows),
-          Date = sub('^.*(\\d{4}-\\d{2}-\\d{2}).*$', '\\1', rows)
+          Date = sub('^.*(\\d{4}-\\d{2}-\\d{2}).*$', '\\1', rows),
+          stringsAsFactors = FALSE
         )
 
         tbl_download <- local({
@@ -121,8 +123,9 @@
         exclude <- union(exclude, result_mis$package)
       }
 
-      p_tbl <- tibble(package = p, file = gzfile_name,  date = gzfile_date,
-                      status = status, url = gzfile_url)
+      p_tbl <- data.frame(package = p, file = gzfile_name,  date = gzfile_date,
+                      status = status, url = gzfile_url,
+                      stringsAsFactors = FALSE)
 
       result <- bind_rows(result, p_tbl)
       exclude <- union(exclude, p)
