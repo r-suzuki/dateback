@@ -57,11 +57,16 @@ collect <- function(
 
   tools::write_PACKAGES(file.path(outdir, "src/contrib"))
 
-  # TODO: as.data.frame can be removed if result is data.frame
-  utils::capture.output(
-    print(as.data.frame(result)),
-    file = file.path(outdir, "log_collect.txt")
-  )
+  local({
+    .width_orig <- options()$width
+    on.exit(options(width = .width_orig))
+
+    options(width = 1024)
+    utils::capture.output(
+      print(result, right = FALSE),
+      file = file.path(outdir, "log_collect.txt")
+    )
+  })
 
   return(result)
 }
