@@ -21,27 +21,19 @@ collect <- function(
   dir.create(outdir_src_contrib, recursive = TRUE)
 
   # latest packages
-  pkg_by_date_url <- paste0(repos, "/web/packages/available_packages_by_date.html")
-  pkg_latest <- read_html(pkg_by_date_url) %>%
-    html_element("table") %>%
-    html_table() %>%
-    select(Package, Date)
+  pkg_latest <- .get_pkg_latest(repos)
 
   # installed packages
-  pkg_installed <- installed.packages() %>%
-    as_tibble() %>%
-    select(Package, Version, Priority)
+  pkg_installed <- as.data.frame(installed.packages())[, c("Package", "Version", "Priority"), drop = FALSE]
 
   # packages to be excluded
   pkg_exclude <- if(skip_installed) {
     pkg_installed
   } else {
     if(skip_recommended) {
-      pkg_installed %>%
-        filter(Priority %in% c("base", "recommended"))
+      subset(pkg_installed, Priority %in% c("base", "recommended"))
     } else {
-      pkg_installed %>%
-        filter(Priority == "base")
+      subset(pkg_installed, Priority == "base")
     }
   }
 
@@ -55,18 +47,11 @@ collect <- function(
     pkg_latest = pkg_latest,
     exclude = pkg_exclude$Package)
 
-  script <- c(
-    paste0("# virtual snapshot on ", date, " for ", paste(pkgs, collapse = ", ")),
-    result %>%
-      mutate(code = paste0('install.packages("', file.path("src", "contrib", file),
-                           '", repos = NULL, type = "source")')) %>%
-      pull(code)
-  )
-
   tools::write_PACKAGES(file.path(outdir, "src/contrib"))
-  write(script, file.path(outdir, "install.R"))
+
+  # TODO: as.data.frame can be removed if result is data.frame
   capture.output(
-    result %>% as.data.frame %>% print,
+    print(as.data.frame(result)),
     file = file.path(outdir, "log_collect.txt")
   )
 
