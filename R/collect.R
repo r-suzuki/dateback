@@ -28,20 +28,16 @@ collect <- function(
     select(Package, Date)
 
   # installed packages
-  pkg_installed <- installed.packages() %>%
-    as_tibble() %>%
-    select(Package, Version, Priority)
+  pkg_installed <- as.data.frame(installed.packages())[, c("Package", "Version", "Priority"), drop = FALSE]
 
   # packages to be excluded
   pkg_exclude <- if(skip_installed) {
     pkg_installed
   } else {
     if(skip_recommended) {
-      pkg_installed %>%
-        filter(Priority %in% c("base", "recommended"))
+      subset(pkg_installed, Priority %in% c("base", "recommended"))
     } else {
-      pkg_installed %>%
-        filter(Priority == "base")
+      subset(pkg_installed, Priority == "base")
     }
   }
 
