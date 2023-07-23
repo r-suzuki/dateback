@@ -124,7 +124,7 @@
 
         result_mis <- eval(cl)
 
-        result <- bind_rows(result, result_mis)
+        result <- rbind(result, result_mis)
         exclude <- union(exclude, result_mis$package)
       }
 
@@ -132,7 +132,7 @@
                       status = status, url = gzfile_url,
                       stringsAsFactors = FALSE)
 
-      result <- bind_rows(result, p_df)
+      result <- rbind(result, p_df)
       exclude <- union(exclude, p)
     }
   }
