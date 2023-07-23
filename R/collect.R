@@ -10,13 +10,21 @@ collect <- function(
 ) {
 
   # check outdir and create outdir/src/contrib
-  if(file.exists(outdir)) {
-    if(!file.info(outdir)$isdir) {
-      stop("outdir should be a directory, not a file")
-    } else if(length(list.files(outdir)) > 0 && !overwrite){
-      stop("outdir is not empty. Set overwrite = TRUE to force overwriting")
+  if( file.exists(outdir)) {
+    if(overwrite) {
+      unlink(outdir, recursive = TRUE)
+    } else {
+      msg <- if(!file.info(outdir)$isdir) {
+        "outdir should be a directory, not a file."
+      } else if(length(list.files(outdir)) > 0){
+        msg <- "outdir is not empty."
+      }
+
+      stop(msg, "\n  ",
+           "Set overwrite = TRUE to force overwriting (existing contents will be removed).")
     }
   }
+
   outdir_src_contrib <- file.path(outdir, "src", "contrib")
   dir.create(outdir_src_contrib, recursive = TRUE)
 
