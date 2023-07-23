@@ -25,6 +25,22 @@
     by = "Package")[, c("Package", "Version", "Date"), drop = FALSE]
 }
 
+.get_deps <- function(path, deps) {
+  d <- read.dcf(file.path(path, "DESCRIPTION"), fields = deps)
+
+  if(all(is.na(d))) {
+    return(character(0))
+  } else {
+    d_flat <- local({
+      tmp <- unlist(strsplit(d[!is.na(d) & d != ""], ","), recursive = TRUE)
+      tmp <- trimws(tmp)
+      sub("^(\\S+).*$", "\\1", tmp)
+    })
+
+    return(d_flat)
+  }
+}
+
 .collect <- function(
     pkgs,
     date,
@@ -47,7 +63,7 @@
     if(p %in% exclude) {
       # do nothing
     } else {
-      use_latest <- use_archive <- FALSE
+      use_latest <- FALSE
 
       if(p %in% pkg_latest$Package) {
         date_latest <- subset(pkg_latest, Package == p)$Date
@@ -57,24 +73,27 @@
         }
       }
 
-      if(!use_latest) {
-        get_result <- httr::http_status(httr::GET(paste0(repos, "/src/contrib/Archive/", p, "/")))
-        use_archive <- get_result$category == "Success"
-      }
-
       if(use_latest) {
         status <- "latest"
         v <- subset(pkg_available, Package == p)$Version
         gzfile_name <- paste0(p, "_", v, ".tar.gz")
         gzfile_url <- paste0(repos, "/src/contrib/",  gzfile_name)
         gzfile_date <- date_latest
-      } else if(use_archive){
+      } else {
         status <- "archive"
         url <- paste0(repos, "/src/contrib/Archive/", p, "/")
 
-        con <- curl::curl(url, open = "r")
-        txt <- readLines(con)
-        close(con)
+        try_result <- try({
+          tmpfile <- tempfile()
+          on.exit(unlink(tmpfile))
+
+          utils::download.file(url, tmpfile, quiet = TRUE)
+          txt <- readLines(tmpfile)
+        })
+
+        if(inherits(try_result, "try-error")) {
+          stop("Package '", p, "' is not available at ", repos)
+        }
 
         rows <- txt[grepl("<a href=.*\\d{4}-\\d{2}-\\d{2}", txt)]
         df <- data.frame(
@@ -92,8 +111,6 @@
         gzfile_name <- df_download$File
         gzfile_url <- paste0(url, gzfile_name)
         gzfile_date <- df_download$Date
-      } else {
-        stop("Package '", p, "' is not available at ", repos)
       }
 
       # Download and uncompress tar.gz
@@ -102,20 +119,11 @@
 
       tmpd <- tempdir()
       utils::untar(gzf, exdir = tmpd)
-
       uncomp <- file.path(tmpd, p)
 
-      # table of dependencies
-      dep_df <- desc_get_deps(file.path(uncomp))
+      dep <- .get_deps(path = uncomp, deps = dependencies)
 
-      missing <- if(nrow(dep_df) > 0) {
-        subset(dep_df, package != "R" &
-                 type %in% dependencies &
-                 !(package %in% exclude)
-               )$package
-      } else {
-        character(0)
-      }
+      missing <- setdiff(dep, c("R", exclude))
 
       if(length(missing) > 0) {
         cl <- match.call()
