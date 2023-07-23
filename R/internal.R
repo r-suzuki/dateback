@@ -4,7 +4,7 @@
 
   utils::download.file(url, tmpfile, quiet = TRUE)
   html <- readLines(tmpfile)
-  rows <- grep("^\\s*<tr>.*</tr>\\s*$", html, value = TRUE)
+  rows <- grep("^\\s*<tr>.*$", html, value = TRUE)
 
   date_col <- sub("^\\s*<tr>\\s*<td>\\s*([^< ]+)\\s*</td>.*$", "\\1", rows)
   pkgs_col <- sub("^.*<span class=\"CRAN\">([^<]+)</span>.*$", "\\1", rows)
@@ -14,7 +14,8 @@
 
 .get_pkg_latest <- function(repos) {
   # available packages
-  pkg_available <- as.data.frame(utils::available.packages(repos = repos, type = "source"))
+  pkg_available <- as.data.frame(
+    utils::available.packages(repos = repos, type = "source"))
 
   url <- paste0(repos, "/web/packages/available_packages_by_date.html")
   pkg_by_date <- .get_pkg_by_date(url)
