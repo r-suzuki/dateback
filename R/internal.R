@@ -25,6 +25,22 @@
     by = "Package")[, c("Package", "Version", "Date"), drop = FALSE]
 }
 
+.get_deps <- function(path, deps) {
+  d <- read.dcf(file.path(path, "DESCRIPTION"), fields = deps)
+
+  if(all(is.na(d))) {
+    return(character(0))
+  } else {
+    d_flat <- local({
+      tmp <- unlist(strsplit(d[!is.na(d) & d != ""], ","), recursive = TRUE)
+      tmp <- trimws(tmp)
+      sub("^(\\S+).*$", "\\1", tmp)
+    })
+
+    return(d_flat)
+  }
+}
+
 .collect <- function(
     pkgs,
     date,
@@ -102,20 +118,11 @@
 
       tmpd <- tempdir()
       utils::untar(gzf, exdir = tmpd)
-
       uncomp <- file.path(tmpd, p)
 
-      # table of dependencies
-      dep_df <- desc_get_deps(file.path(uncomp))
+      dep <- .get_deps(path = uncomp, deps = dependencies)
 
-      missing <- if(nrow(dep_df) > 0) {
-        subset(dep_df, package != "R" &
-                 type %in% dependencies &
-                 !(package %in% exclude)
-               )$package
-      } else {
-        character(0)
-      }
+      missing <- setdiff(dep, c("R", exclude))
 
       if(length(missing) > 0) {
         cl <- match.call()

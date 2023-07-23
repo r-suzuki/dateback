@@ -1,2 +1,1 @@
 export("install", "collect")
-importFrom("desc", "desc_get_deps")
