@@ -1,3 +1,20 @@
+.get_pkg_latest <- function(repos) {
+  pkg_by_date_url <- paste0(repos, "/web/packages/available_packages_by_date.html")
+  read_html(pkg_by_date_url) %>%
+    html_element("table") %>%
+    html_table() %>%
+    select(Package, Date) %>%
+    return
+}
+
+.get_tbl <- function(url) {
+  read_html(url) %>%
+    html_elements("table") %>%
+    html_table() %>%
+    bind_rows() %>%
+    return
+}
+
 .collect <- function(
     pkgs,
     date,
@@ -38,16 +55,11 @@
         status <- "latest"
         url <- paste0(repos, "/web/packages/", p, "/")
 
-        tbl <- read_html(url) %>%
-          html_elements("table") %>%
-          html_table() %>%
-          bind_rows()
+        tbl <- .get_tbl(url)
 
-        tbl_download <- tbl %>%
-          filter(grepl("^Package.*source:$", X1)) %>%
-          slice(1)
+        tbl_download <- subset(tbl, grepl("^Package.*source:$", X1))[1, , drop = FALSE]
 
-        gzfile_name <- tbl_download %>% pull(X2)
+        gzfile_name <- tbl_download$X2
         gzfile_url <- paste0(repos, "/src/contrib/",  gzfile_name)
         gzfile_date <- date_latest
       } else if(use_archive){

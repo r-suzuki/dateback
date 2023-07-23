@@ -21,11 +21,7 @@ collect <- function(
   dir.create(outdir_src_contrib, recursive = TRUE)
 
   # latest packages
-  pkg_by_date_url <- paste0(repos, "/web/packages/available_packages_by_date.html")
-  pkg_latest <- read_html(pkg_by_date_url) %>%
-    html_element("table") %>%
-    html_table() %>%
-    select(Package, Date)
+  pkg_latest <- .get_pkg_latest(repos)
 
   # installed packages
   pkg_installed <- as.data.frame(installed.packages())[, c("Package", "Version", "Priority"), drop = FALSE]
