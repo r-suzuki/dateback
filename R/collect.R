@@ -55,18 +55,11 @@ collect <- function(
     pkg_latest = pkg_latest,
     exclude = pkg_exclude$Package)
 
-  script <- c(
-    paste0("# virtual snapshot on ", date, " for ", paste(pkgs, collapse = ", ")),
-    result %>%
-      mutate(code = paste0('install.packages("', file.path("src", "contrib", file),
-                           '", repos = NULL, type = "source")')) %>%
-      pull(code)
-  )
-
   tools::write_PACKAGES(file.path(outdir, "src/contrib"))
-  write(script, file.path(outdir, "install.R"))
+
+  # TODO: as.data.frame can be removed if result is data.frame
   capture.output(
-    result %>% as.data.frame %>% print,
+    print(as.data.frame(result)),
     file = file.path(outdir, "log_collect.txt")
   )
 
