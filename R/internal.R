@@ -1,14 +1,3 @@
-.get_pkg_latest <- function(repos) {
-  # available packages
-  pkg_available <- as.data.frame(utils::available.packages(repos = repos, type = "source"))
-
-  url <- paste0(repos, "/web/packages/available_packages_by_date.html")
-  .get_pkg_by_date(url) %>%
-    left_join(pkg_available %>% select(Package, Version), by = "Package") %>%
-    select(Package, Version, Date) %>%
-    return()
-}
-
 .get_pkg_by_date <- function(url) {
   tmpfile <- tempfile()
   on.exit(unlink(tmpfile))
@@ -21,6 +10,19 @@
   pkgs_col <- sub("^.*<span class=\"CRAN\">([^<]+)</span>.*$", "\\1", rows)
 
   return(data.frame(Package=pkgs_col[-1], Date=date_col[-1]))
+}
+
+.get_pkg_latest <- function(repos) {
+  # available packages
+  pkg_available <- as.data.frame(utils::available.packages(repos = repos, type = "source"))
+
+  url <- paste0(repos, "/web/packages/available_packages_by_date.html")
+  pkg_by_date <- .get_pkg_by_date(url)
+
+  merge(
+    pkg_by_date,
+    pkg_available[, c("Package", "Version"), drop = FALSE],
+    by = "Package")[, c("Package", "Version", "Date"), drop = FALSE]
 }
 
 .collect <- function(
