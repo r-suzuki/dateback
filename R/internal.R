@@ -84,9 +84,11 @@
         url <- paste0(repos, "/src/contrib/Archive/", p, "/")
 
         try_result <- try({
-          con <- curl::curl(url, open = "r")
-          txt <- readLines(con)
-          close(con)
+          tmpfile <- tempfile()
+          on.exit(unlink(tmpfile))
+
+          utils::download.file(url, tmpfile, quiet = TRUE)
+          txt <- readLines(tmpfile)
         })
 
         if(inherits(try_result, "try-error")) {

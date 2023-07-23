@@ -13,5 +13,4 @@ Description: Works like a virtual CRAN snapshot for source packages.
     (<https://blog.revolutionanalytics.com/2023/01/mran-time-machine-retired.html>).
 License: MIT + file LICENSE
 Encoding: UTF-8
-Imports: curl
 URL: https://github.com/r-suzuki/dateback
