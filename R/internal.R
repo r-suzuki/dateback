@@ -22,9 +22,7 @@
       use_latest <- use_archive <- FALSE
 
       if(p %in% pkg_latest$Package) {
-        date_latest <- pkg_latest %>%
-          filter(Package == p) %>%
-          pull(Date)
+        date_latest <- subset(pkg_latest, Package == p)$Date
 
         if(date_latest <= date) {
           use_latest <- TRUE
@@ -66,14 +64,15 @@
           Date = sub('^.*(\\d{4}-\\d{2}-\\d{2}).*$', '\\1', rows)
         )
 
-        tbl_download <- tbl %>%
-          filter(Date <= date) %>%
-          arrange(desc(Date)) %>%
-          slice(1)
+        tbl_download <- local({
+          tmp <- subset(tbl, Date <= date)
+          tmp <- tmp[order(tmp$Date, decreasing = TRUE)[1], , drop = FALSE]
+          tmp
+        })
 
-        gzfile_name <- tbl_download %>% pull(File)
+        gzfile_name <- tbl_download$File
         gzfile_url <- paste0(url, gzfile_name)
-        gzfile_date <- tbl_download %>% pull(Date)
+        gzfile_date <- tbl_download$Date
       } else {
         stop("Package '", p, "' is not available at ", repos)
       }
@@ -91,11 +90,10 @@
       dep_tbl <- desc_get_deps(file.path(uncomp))
 
       missing <- if(nrow(dep_tbl) > 0) {
-        dep_tbl %>%
-          filter(package != "R") %>%
-          filter(type %in% dependencies) %>%
-          filter(!(package %in% exclude)) %>%
-          pull(package)
+        subset(dep_tbl, package != "R" &
+                 type %in% dependencies &
+                 !(package %in% exclude)
+               )$package
       } else {
         character(0)
       }
