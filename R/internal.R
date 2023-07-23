@@ -66,7 +66,7 @@
       use_latest <- FALSE
 
       if(p %in% pkg_latest$Package) {
-        date_latest <- subset(pkg_latest, Package == p)$Date
+        date_latest <- pkg_latest[pkg_latest$Package == p, "Date"]
 
         if(date_latest <= date) {
           use_latest <- TRUE
@@ -75,7 +75,7 @@
 
       if(use_latest) {
         status <- "latest"
-        v <- subset(pkg_available, Package == p)$Version
+        v <- pkg_latest[pkg_latest$Package == p, "Version"]
         gzfile_name <- paste0(p, "_", v, ".tar.gz")
         gzfile_url <- paste0(repos, "/src/contrib/",  gzfile_name)
         gzfile_date <- date_latest
@@ -103,7 +103,7 @@
         )
 
         df_download <- local({
-          tmp <- subset(df, Date <= date)
+          tmp <- df[df$Date <= date, , drop = FALSE]
           tmp <- tmp[order(tmp$Date, decreasing = TRUE)[1], , drop = FALSE]
           tmp
         })

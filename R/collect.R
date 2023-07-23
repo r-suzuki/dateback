@@ -10,13 +10,21 @@ collect <- function(
 ) {
 
   # check outdir and create outdir/src/contrib
-  if(file.exists(outdir)) {
-    if(!file.info(outdir)$isdir) {
-      stop("outdir should be a directory, not a file")
-    } else if(length(list.files(outdir)) > 0 && !overwrite){
-      stop("outdir is not empty. Set overwrite = TRUE to force overwriting")
+  if( file.exists(outdir)) {
+    if(overwrite) {
+      unlink(outdir, recursive = TRUE)
+    } else {
+      msg <- if(!file.info(outdir)$isdir) {
+        "outdir should be a directory, not a file."
+      } else if(length(list.files(outdir)) > 0){
+        msg <- "outdir is not empty."
+      }
+
+      stop(msg, "\n  ",
+           "Set overwrite = TRUE to force overwriting (existing contents will be removed).")
     }
   }
+
   outdir_src_contrib <- file.path(outdir, "src", "contrib")
   dir.create(outdir_src_contrib, recursive = TRUE)
 
@@ -31,9 +39,9 @@ collect <- function(
     pkg_installed
   } else {
     if(skip_recommended) {
-      subset(pkg_installed, Priority %in% c("base", "recommended"))
+      pkg_installed[pkg_installed$Priority %in% c("base", "recommended"), , drop = FALSE]
     } else {
-      subset(pkg_installed, Priority == "base")
+      pkg_installed[pkg_installed$Priority == "base", , drop = FALSE]
     }
   }
 
@@ -49,11 +57,16 @@ collect <- function(
 
   tools::write_PACKAGES(file.path(outdir, "src/contrib"))
 
-  # TODO: as.data.frame can be removed if result is data.frame
-  utils::capture.output(
-    print(as.data.frame(result)),
-    file = file.path(outdir, "log_collect.txt")
-  )
+  local({
+    .width_orig <- options()$width
+    on.exit(options(width = .width_orig))
+
+    options(width = 1024)
+    utils::capture.output(
+      print(result, right = FALSE),
+      file = file.path(outdir, "log_collect.txt")
+    )
+  })
 
   return(result)
 }
