@@ -1,12 +1,12 @@
 install <- function(
     pkgs,
     date,
-    outdir = NULL,
     lib = .libPaths()[1],
     repos = "https://cloud.r-project.org",
     dependencies = c("Depends", "Imports", "LinkingTo"),
     skip_installed = TRUE,
     skip_recommended = FALSE,
+    outdir = NULL,
     overwrite = FALSE,
     ...) {
 

@@ -21,7 +21,7 @@ To install `ranger` package and it's dependencies on the date `2023-03-01`:
 dateback::install(pkgs = "ranger", date = "2023-03-01")
 ```
 
-Or you can collect packages first, and install them later on (maybe in another system).
+Or you can collect packages first, and install them later on (maybe on another system).
 
 ```R
 dateback::collect(pkgs = "ranger", date = "2023-03-01", outdir = "out_dir")
@@ -51,11 +51,16 @@ which no longer work because of the [retirement in July 2023](https://blog.revol
 As mentioned in the above URL, `miniCRAN` package would be a better choice
 if you want to archive the current packages and will use them in the future.
 
-`dateback` will be helpful if you:
+`dateback` will be helpful if you haven't archived packages in advance,
+but need them anyway. It will include the following cases:
 
-- haven't archived packages in advance, but need them anyway
-- wish to find a date when everything went fine
-- just need source package files for Docker images
+- Check reproducibility of old code without pre-archived R packages.
+
+- Your code doesn't work on recent versions of some packages, and wish to get back to the day when everything was fine.
+
+- Have to work on an older version of R, on which recent versions of some packages do not work properly (or cannot be installed) due to compatibility issues.
+
+- Need source package files to make a Docker image stable and reproducible, especially when using an older version of R.
 
 ## NOTE
 This project is at the very beginning stage, so everything can be changed shortly.
