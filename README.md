@@ -45,8 +45,9 @@ install.packages(pkgs = "ranger", repos = "file:out_dir")
 
 ## Details
 This package aims to (partially) substitute the "CRAN Time Machine"
-(or "MRAN Time Machine") and its related `checkpoint` package,
-which no longer work because of the [retirement in July 2023](https://blog.revolutionanalytics.com/2023/01/mran-time-machine-retired.html).
+(or "MRAN Time Machine") and its related packages including `checkpoint`
+and `versions`, which no longer work because of the
+[retirement in July 2023](https://blog.revolutionanalytics.com/2023/01/mran-time-machine-retired.html).
 
 As mentioned in the above URL, `miniCRAN` package would be a better choice
 if you want to archive the current packages and will use them in the future.
@@ -56,11 +57,14 @@ but need them anyway. It will include the following cases:
 
 - Check reproducibility of old code without pre-archived R packages.
 
-- Your code doesn't work on recent versions of some packages, and wish to get back to the day when everything was fine.
+- Your code doesn't work on recent versions of some packages,
+  and wish to get back to the day when everything was fine.
 
-- Have to work on an older version of R, on which recent versions of some packages do not work properly (or cannot be installed) due to compatibility issues.
+- Have to work on an older version of R, on which recent versions of some
+  packages do not work properly (or cannot be installed) due to compatibility issues.
 
-- Need source package files to make a Docker image stable and reproducible, especially when using an older version of R.
+- Need source package files to make a Docker image stable and reproducible,
+  especially when using an older version of R.
 
 ## NOTE
 This project is at the very beginning stage, so everything can be changed shortly.
