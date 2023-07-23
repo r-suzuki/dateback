@@ -63,7 +63,7 @@
     if(p %in% exclude) {
       # do nothing
     } else {
-      use_latest <- use_archive <- FALSE
+      use_latest <- FALSE
 
       if(p %in% pkg_latest$Package) {
         date_latest <- subset(pkg_latest, Package == p)$Date
@@ -73,24 +73,25 @@
         }
       }
 
-      if(!use_latest) {
-        get_result <- httr::http_status(httr::GET(paste0(repos, "/src/contrib/Archive/", p, "/")))
-        use_archive <- get_result$category == "Success"
-      }
-
       if(use_latest) {
         status <- "latest"
         v <- subset(pkg_available, Package == p)$Version
         gzfile_name <- paste0(p, "_", v, ".tar.gz")
         gzfile_url <- paste0(repos, "/src/contrib/",  gzfile_name)
         gzfile_date <- date_latest
-      } else if(use_archive){
+      } else {
         status <- "archive"
         url <- paste0(repos, "/src/contrib/Archive/", p, "/")
 
-        con <- curl::curl(url, open = "r")
-        txt <- readLines(con)
-        close(con)
+        try_result <- try({
+          con <- curl::curl(url, open = "r")
+          txt <- readLines(con)
+          close(con)
+        })
+
+        if(inherits(try_result, "try-error")) {
+          stop("Package '", p, "' is not available at ", repos)
+        }
 
         rows <- txt[grepl("<a href=.*\\d{4}-\\d{2}-\\d{2}", txt)]
         df <- data.frame(
@@ -108,8 +109,6 @@
         gzfile_name <- df_download$File
         gzfile_url <- paste0(url, gzfile_name)
         gzfile_date <- df_download$Date
-      } else {
-        stop("Package '", p, "' is not available at ", repos)
       }
 
       # Download and uncompress tar.gz
