@@ -55,7 +55,7 @@ collect <- function(
     pkg_latest = pkg_latest,
     exclude = pkg_exclude$Package)
 
-  tools::write_PACKAGES(file.path(outdir, "src/contrib"))
+  tools::write_PACKAGES(outdir_src_contrib, type = "source")
 
   local({
     .width_orig <- options()$width
