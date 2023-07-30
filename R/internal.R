@@ -43,7 +43,7 @@
 }
 
 .collect <- function(
-    pkgs,
+    pkg_vers,
     date,
     outdir_src_contrib,
     dependencies,
@@ -60,7 +60,7 @@
     stringsAsFactors = FALSE
   )
 
-  for(p in pkgs) {
+  for(p in names(pkg_vers)) {
     if(p %in% exclude) {
       # do nothing
     } else {
@@ -127,8 +127,18 @@
       missing <- setdiff(dep, c("R", exclude))
 
       if(length(missing) > 0) {
+
+        # set versions
+        missing_vers <- lapply(missing, function(m) {
+          if(m %in% names(pkg_vers)) {
+            return(pkg_vers[[m]])
+          } else {
+            return(NA_character_)
+          }
+        })
+
         cl <- match.call()
-        cl$pkgs <- missing
+        cl$pkg_vers <- missing_vers
         cl$exclude <- c(exclude, result$package)
 
         result_mis <- eval(cl)
