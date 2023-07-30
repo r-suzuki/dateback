@@ -43,7 +43,7 @@ The output directory can be used as a local package repository:
 install.packages(pkgs = "ranger", repos = "file:out_dir")
 ```
 
-## Details
+## Use Cases
 This package aims to (partially) substitute the "CRAN Time Machine"
 (or "MRAN Time Machine") and its related packages including `checkpoint`
 and `versions`, which no longer work because of the
@@ -65,6 +65,42 @@ but need them anyway. It will include the following cases:
 
 - Need source package files to make a Docker image stable and reproducible,
   especially when using an older version of R.
+
+## How It Works
+Suppose we want to install a package `X` and its dependencies, which were available on a specific `DATE`.
+This is done by `dateback` with:
+
+```R
+dateback::install(pkgs = X, date = DATE)
+```
+
+Let `DATE_X_LATEST` be the date when the latest version of `X` was published on CRAN.
+`dateback` works as follows:
+
+- If `DATE_X_LATEST <= DATE`, downloads the latest version.
+- Otherwise (`DATE_X_LATEST > DATE`), searches the "Archive" section of CRAN for the latest version on `DATE`, and downloads it.
+
+Then it unpacks the downloaded `tar.gz` file to check the dependencies.
+
+Suppose that `X` is dependent on `Y` and `Z`. Then `dateback` downloads them with dependencies in the same manner, recursively.
+
+It may seem trivial, but can be difficult, time-consuming and error-prone with complex and/or diverse dependencies. The example below is the result of
+`dateback::install("rstan", date = "2023-03-01")`, which illustrates such a case:
+
+```
+        package                        file       date  status
+1  RcppParallel   RcppParallel_5.1.7.tar.gz 2023-02-27  latest
+2          Rcpp          Rcpp_1.0.10.tar.gz 2023-01-22 archive
+3     RcppEigen  RcppEigen_0.3.3.9.3.tar.gz 2022-11-05  latest
+
+...
+
+41     pkgbuild       pkgbuild_1.4.0.tar.gz 2022-11-27 archive
+42           BH          BH_1.81.0-1.tar.gz 2023-01-22  latest
+43        rstan         rstan_2.21.8.tar.gz 2023-01-17  latest
+```
+
+`rstan` is dependent on 13 packages (as of July 2023, excluding base/recommended packages), and some of them are dependent on other packages. `dateback` downloaded 43 packages in total to solve all the dependencies on the specified date.
 
 ## NOTE
 This project is at the very beginning stage, so everything can be changed shortly.
