@@ -74,12 +74,14 @@
         }
       }
 
+      tar_gz <- list()
+
       if(use_latest) {
         status <- "latest"
         v <- pkg_latest[pkg_latest$Package == p, "Version"]
-        gzfile_name <- paste0(p, "_", v, ".tar.gz")
-        gzfile_url <- paste0(repos, "/src/contrib/",  gzfile_name)
-        gzfile_date <- date_latest
+        tar_gz$name <- paste0(p, "_", v, ".tar.gz")
+        tar_gz$url <- paste0(repos, "/src/contrib/",  tar_gz$name)
+        tar_gz$date <- date_latest
       } else {
         status <- "archive"
         url <- paste0(repos, "/src/contrib/Archive/", p, "/")
@@ -109,14 +111,14 @@
           tmp
         })
 
-        gzfile_name <- df_download$File
-        gzfile_url <- paste0(url, gzfile_name)
-        gzfile_date <- df_download$Date
+        tar_gz$name <- df_download$File
+        tar_gz$url <- paste0(url, tar_gz$name)
+        tar_gz$date <- df_download$Date
       }
 
       # Download and uncompress tar.gz
-      gzf <- file.path(outdir_src_contrib, basename(gzfile_url))
-      utils::download.file(url = gzfile_url, destfile = gzf)
+      gzf <- file.path(outdir_src_contrib, basename(tar_gz$url))
+      utils::download.file(url = tar_gz$url, destfile = gzf)
 
       tmpd <- tempdir()
       utils::untar(gzf, exdir = tmpd)
@@ -147,8 +149,8 @@
         exclude <- union(exclude, result_mis$package)
       }
 
-      p_df <- data.frame(package = p, file = gzfile_name,  date = gzfile_date,
-                      status = status, url = gzfile_url,
+      p_df <- data.frame(package = p, file = tar_gz$name,  date = tar_gz$date,
+                      status = status, url = tar_gz$url,
                       stringsAsFactors = FALSE)
 
       result <- rbind(result, p_df)
