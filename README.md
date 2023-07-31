@@ -84,7 +84,7 @@ Then it unpacks the downloaded `tar.gz` file to check the dependencies.
 
 Suppose that `X` is dependent on `Y` and `Z`. Then `dateback` downloads them with dependencies in the same manner, recursively.
 
-It may seem trivial, but can be difficult, time-consuming and error-prone with complex and/or diverse dependencies. The example below is the result of
+It may seem trivial, but doing this manually can be difficult, time-consuming and error-prone with complex and/or diverse dependencies. The example below is the result of
 `dateback::install("rstan", date = "2023-03-01")`, which illustrates such a case:
 
 ```
