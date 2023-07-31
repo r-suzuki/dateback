@@ -42,15 +42,16 @@
   }
 }
 
-.find_tar_gz <- function(p, date, repos, pkg_latest) {
+.find_tar_gz <- function(p, pkg_vers, date, repos, pkg_latest) {
+
+  ver <- pkg_vers[[p]]
 
   use_latest <- FALSE
   if(p %in% pkg_latest$Package) {
-    date_latest <- pkg_latest[pkg_latest$Package == p, "Date"]
-
-    if(date_latest <= date) {
-      use_latest <- TRUE
-    }
+    latest <- pkg_latest[pkg_latest$Package == p, , drop = TRUE]
+    use_latest <- (!is.null(ver) && latest$Version == ver) ||
+      (is.null(ver) && missing(date)) ||
+      (!missing(date) && latest$Date <= date)
   }
 
   tar_gz <- list()
@@ -59,7 +60,7 @@
 
     tar_gz$name <- paste0(p, "_", v, ".tar.gz")
     tar_gz$url <- paste0(repos, "/src/contrib/",  tar_gz$name)
-    tar_gz$date <- date_latest
+    tar_gz$date <- latest$Date
     tar_gz$status <- "latest"
 
     return(tar_gz)
@@ -86,8 +87,20 @@
       stringsAsFactors = FALSE
     )
 
+    if(!is.null(ver)) {
+      filename <- paste0(p, "_", ver, ".tar.gz")
+      wh <- df$File == filename
+      if(!any(wh)) {
+        stop(filename, " is not found")
+      }
+    } else if(missing(date)) {
+      wh <- rep(TRUE, nrow(df))
+    } else {
+      wh <- df$Date <= date
+    }
+
     df_download <- local({
-      tmp <- df[df$Date <= date, , drop = FALSE]
+      tmp <- df[wh, , drop = FALSE]
       tmp <- tmp[order(tmp$Date, decreasing = TRUE)[1], , drop = FALSE]
       tmp
     })
@@ -103,6 +116,7 @@
 }
 
 .collect <- function(
+    pkgs,
     pkg_vers,
     date,
     outdir_src_contrib,
@@ -120,13 +134,13 @@
     stringsAsFactors = FALSE
   )
 
-  for(p in names(pkg_vers)) {
+  for(p in pkgs) {
     if(p %in% exclude) {
       # do nothing
     } else {
       # find version
-      tar_gz <- .find_tar_gz(p, date = date, repos = repos,
-                             pkg_latest = pkg_latest)
+      tar_gz <- .find_tar_gz(p, pkg_vers = pkg_vers, date = date,
+                             repos = repos, pkg_latest = pkg_latest)
 
       # Download and unpack tar.gz
       gzf <- file.path(outdir_src_contrib, basename(tar_gz$url))
@@ -139,26 +153,15 @@
       dep <- .get_deps(path = uncomp, deps = dependencies)
 
       missing <- setdiff(dep, c("R", exclude))
-      if(length(missing) > 0) {
-        # set versions
-        missing_vers <- lapply(missing, function(m) {
-          if(m %in% names(pkg_vers)) {
-            return(pkg_vers[[m]])
-          } else {
-            return(NA_character_)
-          }
-        })
-        names(missing_vers) <- missing
 
-        cl <- match.call()
-        cl$pkg_vers <- missing_vers
-        cl$exclude <- c(exclude, result$package)
+      cl <- match.call()
+      cl$pkgs <- missing
+      cl$exclude <- union(exclude, result$package)
 
-        result_mis <- eval(cl)
+      result_mis <- eval(cl)
 
-        result <- rbind(result, result_mis)
-        exclude <- union(exclude, result_mis$package)
-      }
+      result <- rbind(result, result_mis)
+      exclude <- union(exclude, result_mis$package)
 
       p_df <- data.frame(package = p, file = tar_gz$name,  date = tar_gz$date,
                       status = tar_gz$status, url = tar_gz$url,

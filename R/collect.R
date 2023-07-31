@@ -48,8 +48,8 @@ collect <- function(
   # make pkg_vers as a list of versions (or NA)
   if(is.list(pkgs)) {
     pkg_vers <- lapply(pkgs, function(x){
-      if(is.null(x) || length(x) == 0 || is.na(x)) {
-        return(NA_character_)
+      if(is.null(x) || length(x) == 0 || is.na(x) || x == "") {
+        return(NULL)
       } else if(length(x) == 1 && is.character(x)) {
         return(x)
       } else {
@@ -57,12 +57,12 @@ collect <- function(
       }
     })
   } else {
-    pkg_vers <- as.list(rep(NA_character_, length(pkgs)))
-    names(pkg_vers) <- pkgs
+    pkg_vers <- list()
   }
 
   # call inner function
   result <- .collect(
+    pkgs = pkgs,
     pkg_vers = pkg_vers,
     date = date,
     outdir_src_contrib = outdir_src_contrib,
