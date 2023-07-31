@@ -10,7 +10,7 @@ collect <- function(
 ) {
 
   # check outdir and create outdir/src/contrib
-  if( file.exists(outdir)) {
+  if(file.exists(outdir)) {
     if(overwrite) {
       unlink(outdir, recursive = TRUE)
     } else {
@@ -45,9 +45,25 @@ collect <- function(
     }
   }
 
+  # make pkg_vers as a list of versions (or NA)
+  if(is.list(pkgs)) {
+    pkg_vers <- lapply(pkgs, function(x){
+      if(is.null(x) || length(x) == 0 || is.na(x) || x == "") {
+        return(NULL)
+      } else if(length(x) == 1 && is.character(x)) {
+        return(x)
+      } else {
+        stop("If 'pkgs' is a list, each content should be a character")
+      }
+    })
+  } else {
+    pkg_vers <- list()
+  }
+
   # call inner function
   result <- .collect(
     pkgs = pkgs,
+    pkg_vers = pkg_vers,
     date = date,
     outdir_src_contrib = outdir_src_contrib,
     dependencies = dependencies,

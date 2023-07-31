@@ -42,8 +42,82 @@
   }
 }
 
+.find_tar_gz <- function(p, pkg_vers, date, repos, pkg_latest) {
+
+  ver <- pkg_vers[[p]]
+
+  use_latest <- FALSE
+  if(p %in% pkg_latest$Package) {
+    latest <- pkg_latest[pkg_latest$Package == p, , drop = TRUE]
+    use_latest <- (!is.null(ver) && latest$Version == ver) ||
+      (is.null(ver) && missing(date)) ||
+      (!missing(date) && latest$Date <= date)
+  }
+
+  tar_gz <- list()
+  if(use_latest) {
+    v <- pkg_latest[pkg_latest$Package == p, "Version"]
+
+    tar_gz$name <- paste0(p, "_", v, ".tar.gz")
+    tar_gz$url <- paste0(repos, "/src/contrib/",  tar_gz$name)
+    tar_gz$date <- latest$Date
+    tar_gz$status <- "latest"
+
+    return(tar_gz)
+
+  } else {
+    url <- paste0(repos, "/src/contrib/Archive/", p, "/")
+
+    try_result <- try({
+      tmpfile <- tempfile()
+      on.exit(unlink(tmpfile))
+
+      utils::download.file(url, tmpfile, quiet = TRUE)
+      txt <- readLines(tmpfile)
+    })
+
+    if(inherits(try_result, "try-error")) {
+      stop("Package '", p, "' is not available at ", repos)
+    }
+
+    rows <- txt[grepl("<a href=.*\\d{4}-\\d{2}-\\d{2}", txt)]
+    df <- data.frame(
+      File = sub('^ *<a href="(.+\\.tar\\.gz)">.*$', '\\1', rows),
+      Date = sub('^.*(\\d{4}-\\d{2}-\\d{2}).*$', '\\1', rows),
+      stringsAsFactors = FALSE
+    )
+
+    if(!is.null(ver)) {
+      filename <- paste0(p, "_", ver, ".tar.gz")
+      wh <- df$File == filename
+      if(!any(wh)) {
+        stop(filename, " is not found")
+      }
+    } else if(missing(date)) {
+      wh <- rep(TRUE, nrow(df))
+    } else {
+      wh <- df$Date <= date
+    }
+
+    df_download <- local({
+      tmp <- df[wh, , drop = FALSE]
+      tmp <- tmp[order(tmp$Date, decreasing = TRUE)[1], , drop = FALSE]
+      tmp
+    })
+
+    tar_gz$name <- df_download$File
+    tar_gz$url <- paste0(url, tar_gz$name)
+    tar_gz$date <- df_download$Date
+    tar_gz$status <- "archive"
+
+    return(tar_gz)
+  }
+
+}
+
 .collect <- function(
     pkgs,
+    pkg_vers,
     date,
     outdir_src_contrib,
     dependencies,
@@ -64,59 +138,13 @@
     if(p %in% exclude) {
       # do nothing
     } else {
-      use_latest <- FALSE
+      # find version
+      tar_gz <- .find_tar_gz(p, pkg_vers = pkg_vers, date = date,
+                             repos = repos, pkg_latest = pkg_latest)
 
-      if(p %in% pkg_latest$Package) {
-        date_latest <- pkg_latest[pkg_latest$Package == p, "Date"]
-
-        if(date_latest <= date) {
-          use_latest <- TRUE
-        }
-      }
-
-      if(use_latest) {
-        status <- "latest"
-        v <- pkg_latest[pkg_latest$Package == p, "Version"]
-        gzfile_name <- paste0(p, "_", v, ".tar.gz")
-        gzfile_url <- paste0(repos, "/src/contrib/",  gzfile_name)
-        gzfile_date <- date_latest
-      } else {
-        status <- "archive"
-        url <- paste0(repos, "/src/contrib/Archive/", p, "/")
-
-        try_result <- try({
-          tmpfile <- tempfile()
-          on.exit(unlink(tmpfile))
-
-          utils::download.file(url, tmpfile, quiet = TRUE)
-          txt <- readLines(tmpfile)
-        })
-
-        if(inherits(try_result, "try-error")) {
-          stop("Package '", p, "' is not available at ", repos)
-        }
-
-        rows <- txt[grepl("<a href=.*\\d{4}-\\d{2}-\\d{2}", txt)]
-        df <- data.frame(
-          File = sub('^ *<a href="(.+\\.tar\\.gz)">.*$', '\\1', rows),
-          Date = sub('^.*(\\d{4}-\\d{2}-\\d{2}).*$', '\\1', rows),
-          stringsAsFactors = FALSE
-        )
-
-        df_download <- local({
-          tmp <- df[df$Date <= date, , drop = FALSE]
-          tmp <- tmp[order(tmp$Date, decreasing = TRUE)[1], , drop = FALSE]
-          tmp
-        })
-
-        gzfile_name <- df_download$File
-        gzfile_url <- paste0(url, gzfile_name)
-        gzfile_date <- df_download$Date
-      }
-
-      # Download and uncompress tar.gz
-      gzf <- file.path(outdir_src_contrib, basename(gzfile_url))
-      utils::download.file(url = gzfile_url, destfile = gzf)
+      # Download and unpack tar.gz
+      gzf <- file.path(outdir_src_contrib, basename(tar_gz$url))
+      utils::download.file(url = tar_gz$url, destfile = gzf)
 
       tmpd <- tempdir()
       utils::untar(gzf, exdir = tmpd)
@@ -126,19 +154,17 @@
 
       missing <- setdiff(dep, c("R", exclude))
 
-      if(length(missing) > 0) {
-        cl <- match.call()
-        cl$pkgs <- missing
-        cl$exclude <- c(exclude, result$package)
+      cl <- match.call()
+      cl$pkgs <- missing
+      cl$exclude <- union(exclude, result$package)
 
-        result_mis <- eval(cl)
+      result_mis <- eval(cl)
 
-        result <- rbind(result, result_mis)
-        exclude <- union(exclude, result_mis$package)
-      }
+      result <- rbind(result, result_mis)
+      exclude <- union(exclude, result_mis$package)
 
-      p_df <- data.frame(package = p, file = gzfile_name,  date = gzfile_date,
-                      status = status, url = gzfile_url,
+      p_df <- data.frame(package = p, file = tar_gz$name,  date = tar_gz$date,
+                      status = tar_gz$status, url = tar_gz$url,
                       stringsAsFactors = FALSE)
 
       result <- rbind(result, p_df)
