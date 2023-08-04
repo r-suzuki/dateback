@@ -53,9 +53,9 @@ install <- function(
 
   if(fail_collect || fail_install) {
     if(fail_collect) {
-      .msg <- "An error occured during dateback::collect."
+      .msg <- "An error occured during dateback::collect()"
     } else if(fail_install) {
-      .msg <- "An error occured during utils::install.packages."
+      .msg <- "An error occured during utils::install.packages()"
     }
 
     if(.use_tmp_dir && dir.exists(outdir)) {
