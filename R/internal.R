@@ -1,8 +1,12 @@
-.get_pkg_by_date <- function(url_str) {
+.get_html <- function(url_str) {
   con <- base::url(url_str)
   on.exit(close(con))
 
-  html <- readLines(con)
+  readLines(con)
+}
+
+.get_pkg_by_date <- function(url_str) {
+  html <- .get_html(url_str)
 
   # get table rows from html.
   rows <- grep("(<th|<td)",
@@ -92,13 +96,7 @@
         status <- "archive"
         url <- paste0(repos, "/src/contrib/Archive/", p, "/")
 
-        try_result <- try({
-          tmpfile <- tempfile()
-          on.exit(unlink(tmpfile))
-
-          utils::download.file(url, tmpfile, quiet = TRUE)
-          txt <- readLines(tmpfile)
-        })
+        try_result <- try(txt <- .get_html(url))
 
         if(inherits(try_result, "try-error")) {
           stop("Package '", p, "' is not available at ", repos)
