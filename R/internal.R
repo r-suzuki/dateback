@@ -1,9 +1,8 @@
-.get_pkg_by_date <- function(url) {
-  tmpfile <- tempfile()
-  on.exit(unlink(tmpfile))
+.get_pkg_by_date <- function(url_str) {
+  con <- base::url(url_str)
+  on.exit(close(con))
 
-  utils::download.file(url, tmpfile, quiet = TRUE)
-  html <- readLines(tmpfile)
+  html <- readLines(con)
   rows <- grep("^\\s*<tr>.*$", html, value = TRUE)
 
   date_col <- sub("^\\s*<tr>\\s*<td>\\s*([^< ]+)\\s*</td>.*$", "\\1", rows)
