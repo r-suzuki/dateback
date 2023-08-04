@@ -3,12 +3,21 @@
   on.exit(close(con))
 
   html <- readLines(con)
-  rows <- grep("^\\s*<tr>.*$", html, value = TRUE)
 
-  date_col <- sub("^\\s*<tr>\\s*<td>\\s*([^< ]+)\\s*</td>.*$", "\\1", rows)
-  pkgs_col <- sub("^.*<span class=\"CRAN\">([^<]+)</span>.*$", "\\1", rows)
+  # get table rows from html.
+  rows <- grep("(<th|<td)",
+               strsplit(
+                 paste(html, collapse = " "), # some rows may contain \n
+                 "<tr>|</tr>")[[1]],
+               value = TRUE)
 
-  return(data.frame(Package=pkgs_col[-1], Date=date_col[-1]))
+  # get first column as date
+  date_col <- sub("^.*<td>\\s*(\\S*?)\\s*</td>.*$", "\\1", rows[-1])
+
+  # get package name in <span class = "CRAN">
+  pkgs_col <- sub("^.*<span class=\"CRAN\">(.*?)</span>.*$", "\\1", rows[-1])
+
+  return(data.frame(Package = pkgs_col, Date = date_col))
 }
 
 .get_pkg_latest <- function(repos) {
