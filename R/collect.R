@@ -8,9 +8,13 @@ collect <- function(
     skip_recommended = TRUE,
     overwrite = FALSE
 ) {
+  # check arguments
+  if(length(repos) != 1) {
+    stop("'repos' should be of length one")
+  }
 
   # check outdir and create outdir/src/contrib
-  if( file.exists(outdir)) {
+  if(file.exists(outdir)) {
     if(overwrite) {
       unlink(outdir, recursive = TRUE)
     } else {
