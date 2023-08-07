@@ -1,5 +1,8 @@
 repos <- "https://cloud.r-project.org"
 
+# avoid timeout error
+options(timeout = 180)
+
 # get package list by date
 pkg_by_date <- dateback:::.get_pkg_by_date(repos)
 head(pkg_by_date)
