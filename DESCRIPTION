@@ -1,7 +1,7 @@
 Package: dateback
 Type: Package
 Title: Collect and Install R Packages on a Specified Date with Dependencies
-Version: 0.1.0-999
+Version: 1.0.0
 Author: Ryota Suzuki <suzuki@ef-prime.com>
 Maintainer: Ryota Suzuki <suzuki@ef-prime.com>
 Description: Works like a virtual CRAN snapshot for source packages.
