@@ -9,6 +9,10 @@ collect <- function(
     overwrite = FALSE
 ) {
   # check arguments
+  if(missing(pkgs) || is.null(pkgs) || any(is.na(pkgs)) || any(nchar(pkgs) == 0)) {
+    stop("'pkgs' should be valid package name(s)")
+  }
+
   if(length(repos) != 1) {
     stop("'repos' should be of length one")
   }
