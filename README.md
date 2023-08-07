@@ -21,6 +21,8 @@ To install `ranger` package and it's dependencies on the date `2023-03-01`:
 dateback::install(pkgs = "ranger", date = "2023-03-01")
 ```
 
+Note that `library(dateback)` is not required. This `package::function` notation is recommended when using this package.
+
 Or you can collect packages first, and install them later on (maybe on another system).
 
 ```R
@@ -101,6 +103,3 @@ It may seem trivial, but doing this manually can be difficult, time-consuming an
 ```
 
 `rstan` is dependent on 13 packages (as of July 2023, excluding base/recommended packages), and some of them are dependent on other packages. `dateback` downloaded 43 packages in total to solve all the dependencies on the specified date.
-
-## NOTE
-This project is at the very beginning stage, so everything can be changed shortly.
