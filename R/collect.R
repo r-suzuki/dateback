@@ -31,10 +31,10 @@ collect <- function(
       }
 
       if(!is.null(msg)) {
-      stop(msg, "\n  ",
-           "Set overwrite = TRUE to force overwriting (existing contents will be removed).")
+        stop(msg, "\n  ",
+             "Set overwrite = TRUE to force overwriting (existing contents will be removed).")
+      }
     }
-  }
   }
 
   outdir_src_contrib <- file.path(outdir, "src", "contrib")
@@ -68,6 +68,9 @@ collect <- function(
     exclude = pkg_exclude$Package)
 
   tools::write_PACKAGES(outdir_src_contrib, type = "source")
+
+  # avoid rds version mismatch
+  file.remove(file.path(outdir_src_contrib, "PACKAGES.rds"))
 
   local({
     .width_orig <- options()$width
