@@ -47,7 +47,7 @@
     d_flat <- local({
       tmp <- unlist(strsplit(d[!is.na(d) & d != ""], ","), recursive = TRUE)
       tmp <- trimws(tmp)
-      sub("^(\\S+).*$", "\\1", tmp)
+      sub("^([^ (]+).*$", "\\1", tmp) # "pkg (>= x.y.z)" is expected, but "pkg(>= x.y.z)" exists
     })
 
     return(d_flat)
