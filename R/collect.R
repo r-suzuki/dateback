@@ -25,12 +25,16 @@ collect <- function(
       msg <- if(!file.info(outdir)$isdir) {
         "outdir should be a directory, not a file."
       } else if(length(list.files(outdir)) > 0){
-        msg <- "outdir is not empty."
+        "outdir is not empty."
+      } else {
+        NULL
       }
 
+      if(!is.null(msg)) {
       stop(msg, "\n  ",
            "Set overwrite = TRUE to force overwriting (existing contents will be removed).")
     }
+  }
   }
 
   outdir_src_contrib <- file.path(outdir, "src", "contrib")
