@@ -102,4 +102,4 @@ It may seem trivial, but doing this manually can be difficult, time-consuming an
 43        rstan         rstan_2.21.8.tar.gz 2023-01-17  latest
 ```
 
-`rstan` is dependent on 13 packages (as of July 2023, excluding base/recommended packages), and some of them are dependent on other packages. `dateback` downloaded 43 packages in total to solve all the dependencies on the specified date.
+`rstan` is dependent on 13 packages (excluding base/recommended packages), and some of them are dependent on other packages. `dateback` downloaded 43 packages in total to solve all the dependencies on the specified date.
