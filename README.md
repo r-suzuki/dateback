@@ -8,11 +8,22 @@ all of which were available on a specific day.
 
 ## Install
 
+### Latest release
+
+Find the latest release on GitHub and download `dateback_x.y.z.tar.gz`:
+https://github.com/r-suzuki/dateback/releases
+
+Then install it locally on R:
+
+```r
+install.packages("dateback_x.y.z.tar.gz", repos = NULL)
+```
+
+### Development version
+
 ```R
 devtools::install_github("r-suzuki/dateback")
 ```
-
-It will also be submitted to CRAN (after the "submission offline" period from Jul 21 to Aug 7, 2023).
 
 ## Example
 To install `ranger` package and it's dependencies on the date `2023-03-01`:
