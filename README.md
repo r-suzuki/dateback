@@ -45,8 +45,7 @@ Or you can collect packages first, and install them later on (maybe on another s
 dateback::collect(pkgs = "ranger", date = "2023-03-01", outdir = "out_dir")
 ```
 
-It downloads the source `tar.gz` files which were available on the day.
-Here is an excerpt from the log:
+It downloads the latest `tar.gz` source packages on the day. Here is an excerpt from the log:
 
 ```
   package   file                       date       status

@@ -37,7 +37,7 @@ See the example for details.
 \arguments{
   \item{pkgs}{character vector of the names of packages.}
   \item{date}{character specifying a date in \code{YYYY-MM-DD} format.
-    It tries to find source packages which were available on this date.}
+    It tries to find the latest version of source packages on this date.}
   \item{outdir}{character specifying the output directory path.
     In \code{install()} it can be \code{NULL} to use a temporary directory.
     It will contain downloaded source packages, and can be used as
