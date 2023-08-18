@@ -34,9 +34,6 @@ used as a local repository for \code{\link[utils]{install.packages}()}.
 Use \code{collect()} to create a local repository without installation.
 See the example for details.
 }
-\value{\code{data.frame} containing information about collected packages.
-Please notice that it is intended for logging, and the structure of
-this object may change in future releases.}
 \arguments{
   \item{pkgs}{character vector of the names of packages.}
   \item{date}{character specifying a date in \code{YYYY-MM-DD} format.
@@ -59,6 +56,9 @@ this object may change in future releases.}
     \code{outdir}.}
   \item{\dots}{Arguments to be passed to \code{\link[utils]{install.packages}()}}.
 }
+\value{\code{data.frame} containing information about collected packages.
+Please notice that it is intended for logging, and the structure of
+this object may change in future releases.}
 \examples{
 \dontrun{
 
