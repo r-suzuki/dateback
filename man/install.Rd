@@ -56,6 +56,9 @@ See the example for details.
     \code{outdir}.}
   \item{\dots}{Arguments to be passed to \code{\link[utils]{install.packages}()}}.
 }
+\value{\code{data.frame} containing information about collected packages.
+Please notice that it is intended for logging, and the structure of
+this object may change in future releases.}
 \examples{
 \dontrun{
 

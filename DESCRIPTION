@@ -1,15 +1,15 @@
 Package: dateback
 Type: Package
 Title: Collect and Install R Packages on a Specified Date with Dependencies
-Version: 1.0.1-999
+Version: 1.0.2
 Author: Ryota Suzuki <suzuki@ef-prime.com>
 Maintainer: Ryota Suzuki <suzuki@ef-prime.com>
 Description: Works like a virtual CRAN snapshot for source packages.
-    It automatically downloads and installs `tar.gz` files with dependencies,
+    It automatically downloads and installs 'tar.gz' files with dependencies,
     all of which were available on a specific day.
     This package aims to (partially) substitute the "CRAN Time Machine"
-    (or "MRAN Time Machine") and its related packages including `checkpoint`
-    and `versions`, which no longer work because of the retirement in July 2023
+    (or "MRAN Time Machine") and its related packages including 'checkpoint'
+    and 'versions', which no longer work because of the retirement in July 2023
     (<https://blog.revolutionanalytics.com/2023/01/mran-time-machine-retired.html>).
 License: MIT + file LICENSE
 Encoding: UTF-8

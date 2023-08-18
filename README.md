@@ -8,18 +8,23 @@ all of which were available on a specific day.
 
 ## Install
 
-### Latest release
+### CRAN
 
-Find the latest release on GitHub and download `dateback_x.y.z.tar.gz`:
-https://github.com/r-suzuki/dateback/releases
+```r
+install.packages("dateback")
+```
 
-Then install it locally on R:
+### GitHub (source package)
+
+Download `dateback_x.y.z.tar.gz` from https://github.com/r-suzuki/dateback/releases
+
+Install it locally on R:
 
 ```r
 install.packages("dateback_x.y.z.tar.gz", repos = NULL)
 ```
 
-### Development version
+### GitHub (with `devtools`)
 
 ```R
 devtools::install_github("r-suzuki/dateback")
