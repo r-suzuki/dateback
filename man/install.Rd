@@ -62,7 +62,7 @@ this object may change in future releases.}
 \examples{
 \dontrun{
 
-# Install 'ranger' package and its dependecies on the date `2023-03-01`
+# Install 'ranger' package and its dependecies on the date 2023-03-01
 dateback::install(pkgs = "ranger", date = "2023-03-01")
 
 # Collect packages and install them later (maybe on another system)
