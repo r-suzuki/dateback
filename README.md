@@ -61,7 +61,7 @@ install.packages(pkgs = "ranger", repos = "file:local_repo")
 ```
 
 ## Use Cases
-This package aims to (partially) substitute the "CRAN Time Machine"
+This package was originally developed to (partially) substitute the "CRAN Time Machine"
 (or "MRAN Time Machine"), which no longer work because of the
 [retirement in July 2023](https://blog.revolutionanalytics.com/2023/01/mran-time-machine-retired.html).
 
