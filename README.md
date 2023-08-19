@@ -62,22 +62,18 @@ install.packages(pkgs = "ranger", repos = "file:local_repo")
 
 ## Use Cases
 This package aims to (partially) substitute the "CRAN Time Machine"
-(or "MRAN Time Machine") and its related packages including `checkpoint`
-and `versions`, which no longer work because of the
+(or "MRAN Time Machine"), which no longer work because of the
 [retirement in July 2023](https://blog.revolutionanalytics.com/2023/01/mran-time-machine-retired.html).
 
 As mentioned in the above URL, `miniCRAN` package would be a better choice
 if you want to archive the current packages and will use them in the future.
 
-`dateback` will be helpful if you haven't archived packages in advance,
-but need them anyway. It will include the following cases:
+`dateback` will be helpful if you haven't archived packages in advance.
+It will include the following cases:
 
-- Check reproducibility of old code without pre-archived R packages.
+- Reproduce the result of old code without pre-archived R packages.
 
-- Your code doesn't work on recent versions of some packages,
-  and wish to get back to the day when everything was fine.
-
-- Have to work on an older version of R, on which recent versions of some
+- Work on an older version of R, on which recent versions of some
   packages do not work properly (or cannot be installed) due to compatibility issues.
 
 - Need source package files to make a Docker image stable and reproducible,
@@ -118,3 +114,23 @@ It may seem trivial, but doing this manually can be difficult, time-consuming an
 ```
 
 `rstan` is dependent on 13 packages (excluding base/recommended packages), and some of them are dependent on other packages. `dateback` downloaded 43 packages in total to solve all the dependencies on the specified date.
+
+## See Also
+
+[Posit Package Manager](https://packagemanager.posit.co/) (PPM)
+has a snapshot feature, which can be used as a direct replacement for MRAN Time Machine.
+It provides both source and binary packages, and can be used with `checkpoint` package
+which originally needs MRAN Time Machine as a backend.
+
+Compared to PPM, `dateback` would be evaluated as follows:
+
+- Pros
+  - Can get back further (PPM snapshot seems to be available from Oct 2017, whereas `dateback` has no explicit limit)
+  - Can easily make a local repository representing a specific date
+  - No dependency on web services other than CRAN
+- Cons
+  - Only source packages are available (PPM also provides binary packages)
+  - Snapshot is virtual, not real. `dateback` tries to reproduce past state from current CRAN contents, so changes in CRAN can affect the behavior
+  - Needs installation
+
+Many users would benefit from PPM, especially if using Windows/Mac. `dateback` would be a good choice for collecting source packages to be copied to a Linux container.

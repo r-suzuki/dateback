@@ -59,6 +59,15 @@ See the example for details.
 \value{\code{data.frame} containing information about collected packages.
 Please notice that it is intended for logging, and the structure of
 this object may change in future releases.}
+\note{This package was originally developed to (partially) substitute the
+"CRAN Time Machine" (or "MRAN Time Machine"), which retired in July 2023
+(\url{https://blog.revolutionanalytics.com/2023/01/mran-time-machine-retired.html}).
+
+Posit Package Manager (\url{https://packagemanager.posit.co/}) has a snapshot
+feature, so can be used as a direct replacement for CRAN Time Machine.
+Windows/Mac users would greatly benefit from it since binary packages are also
+available.
+}
 \examples{
 \dontrun{
 
