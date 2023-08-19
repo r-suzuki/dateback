@@ -42,7 +42,7 @@ Note that `library(dateback)` is not required. This `package::function` notation
 Or you can collect packages first, and install them later on (maybe on another system).
 
 ```R
-dateback::collect(pkgs = "ranger", date = "2023-03-01", outdir = "out_dir")
+dateback::collect(pkgs = "ranger", date = "2023-03-01", outdir = "local_repo")
 ```
 
 It downloads the latest `tar.gz` source packages on the day. Here is an excerpt from the log:
@@ -57,7 +57,7 @@ It downloads the latest `tar.gz` source packages on the day. Here is an excerpt 
 The output directory can be used as a local package repository:
 
 ```R
-install.packages(pkgs = "ranger", repos = "file:out_dir")
+install.packages(pkgs = "ranger", repos = "file:local_repo")
 ```
 
 ## Use Cases

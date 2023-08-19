@@ -66,7 +66,7 @@ this object may change in future releases.}
 dateback::install(pkgs = "ranger", date = "2023-03-01")
 
 # Collect packages and install them later (maybe on another system)
-dateback::collect(pkgs = "ranger", date = "2023-03-01", outdir = "out_dir")
-install.packages(pkgs = "ranger", repos = "file:out_dir")
+dateback::collect(pkgs = "ranger", date = "2023-03-01", outdir = "local_repo")
+install.packages(pkgs = "ranger", repos = "file:local_repo")
 }
 }
