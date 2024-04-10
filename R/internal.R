@@ -1,5 +1,5 @@
 .get_html <- function(url_str) {
-  con <- base::url(url_str)
+  con <- base::url(url_str, encoding = "UTF-8")
   on.exit(close(con))
 
   readLines(con)
