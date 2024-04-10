@@ -1,5 +1,5 @@
 .get_html <- function(url_str) {
-  con <- base::url(url_str)
+  con <- base::url(url_str, encoding = "UTF-8")
   on.exit(close(con))
 
   readLines(con)
@@ -45,7 +45,9 @@
     return(character(0))
   } else {
     d_flat <- local({
-      tmp <- unlist(strsplit(d[!is.na(d) & d != ""], ","), recursive = TRUE)
+      # TODO: maybe it can be simpler, but be careful with marginal cases
+      tmp <- unlist(strsplit(d[!is.na(d) & d != ""], ",\\s*"), recursive = TRUE)
+      tmp <- sub("\\s", " ", tmp) # pkg\n(>= x.y.z) existed
       tmp <- trimws(tmp)
       sub("^([^ (]+).*$", "\\1", tmp) # "pkg (>= x.y.z)" is expected, but "pkg(>= x.y.z)" exists
     })
