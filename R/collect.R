@@ -73,7 +73,10 @@ collect <- function(
   tools::write_PACKAGES(outdir_src_contrib, type = "source")
 
   # avoid rds version mismatch
-  file.remove(file.path(outdir_src_contrib, "PACKAGES.rds"))
+  rds <- file.path(outdir_src_contrib, "PACKAGES.rds")
+  if (file.exists(rds)) {
+    file.remove(rds)
+  }
 
   local({
     .width_orig <- options()$width
