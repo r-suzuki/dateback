@@ -28,7 +28,9 @@
 .get_pkg_latest <- function(repos) {
   # available packages
   pkg_available <- as.data.frame(
-    utils::available.packages(repos = repos, type = "source"))
+    utils::available.packages(
+      contriburl = utils::contrib.url(repos = repos, type = "source"),
+      type = "source"))
 
   pkg_by_date <- .get_pkg_by_date(repos)
 
