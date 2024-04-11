@@ -22,7 +22,7 @@
   # get package name in <span class = "CRAN">
   pkgs_col <- sub("^.*<span class=\"CRAN\">(.*?)</span>.*$", "\\1", rows[-1])
 
-  return(data.frame(Package = pkgs_col, Date = date_col))
+  return(data.frame(Package = pkgs_col, Date = date_col, stringsAsFactors = FALSE))
 }
 
 .get_pkg_latest <- function(repos) {
@@ -30,7 +30,8 @@
   pkg_available <- as.data.frame(
     utils::available.packages(
       contriburl = utils::contrib.url(repos = repos, type = "source"),
-      type = "source"))
+      type = "source"),
+    stringsAsFactors = FALSE)
 
   pkg_by_date <- .get_pkg_by_date(repos)
 

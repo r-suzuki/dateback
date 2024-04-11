@@ -44,7 +44,10 @@ collect <- function(
   pkg_latest <- .get_pkg_latest(repos)
 
   # installed packages
-  pkg_installed <- as.data.frame(utils::installed.packages())[, c("Package", "Version", "Priority"), drop = FALSE]
+  pkg_installed <- as.data.frame(
+    utils::installed.packages(),
+    stringsAsFactors = FALSE
+    )[, c("Package", "Version", "Priority"), drop = FALSE]
 
   # packages to be excluded
   pkg_exclude <- if(skip_installed) {
