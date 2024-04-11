@@ -76,7 +76,7 @@
 
   rows <- txt[grepl("<a href=.*\\d{4}-\\d{2}-\\d{2}", txt)]
   df <- data.frame(
-    File = sub('^ *<a href="(.+\\.tar\\.gz)">.*$', '\\1', rows),
+    File = sub('^.*<a href="(.+\\.tar\\.gz)">.*$', '\\1', rows),
     Date = sub('^.*(\\d{4}-\\d{2}-\\d{2}).*$', '\\1', rows),
     stringsAsFactors = FALSE
   )
