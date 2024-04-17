@@ -44,7 +44,10 @@ collect <- function(
   pkg_latest <- .get_pkg_latest(repos)
 
   # installed packages
-  pkg_installed <- as.data.frame(utils::installed.packages())[, c("Package", "Version", "Priority"), drop = FALSE]
+  pkg_installed <- as.data.frame(
+    utils::installed.packages()[, c("Package", "Version", "Priority"), drop = FALSE],
+    stringsAsFactors = FALSE
+    )
 
   # packages to be excluded
   pkg_exclude <- if(skip_installed) {
@@ -70,7 +73,10 @@ collect <- function(
   tools::write_PACKAGES(outdir_src_contrib, type = "source")
 
   # avoid rds version mismatch
-  file.remove(file.path(outdir_src_contrib, "PACKAGES.rds"))
+  rds <- file.path(outdir_src_contrib, "PACKAGES.rds")
+  if (file.exists(rds)) {
+    file.remove(rds)
+  }
 
   local({
     .width_orig <- options()$width

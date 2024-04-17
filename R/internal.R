@@ -22,13 +22,16 @@
   # get package name in <span class = "CRAN">
   pkgs_col <- sub("^.*<span class=\"CRAN\">(.*?)</span>.*$", "\\1", rows[-1])
 
-  return(data.frame(Package = pkgs_col, Date = date_col))
+  return(data.frame(Package = pkgs_col, Date = date_col, stringsAsFactors = FALSE))
 }
 
 .get_pkg_latest <- function(repos) {
   # available packages
   pkg_available <- as.data.frame(
-    utils::available.packages(repos = repos, type = "source"))
+    utils::available.packages(
+      contriburl = utils::contrib.url(repos = repos, type = "source"),
+      type = "source"),
+    stringsAsFactors = FALSE)
 
   pkg_by_date <- .get_pkg_by_date(repos)
 
@@ -74,7 +77,7 @@
 
   rows <- txt[grepl("<a href=.*\\d{4}-\\d{2}-\\d{2}", txt)]
   df <- data.frame(
-    File = sub('^ *<a href="(.+\\.tar\\.gz)">.*$', '\\1', rows),
+    File = sub('^.*<a href="(.+\\.tar\\.gz)">.*$', '\\1', rows),
     Date = sub('^.*(\\d{4}-\\d{2}-\\d{2}).*$', '\\1', rows),
     stringsAsFactors = FALSE
   )
